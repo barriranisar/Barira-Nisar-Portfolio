@@ -252,12 +252,22 @@ export const DailyUISection: React.FC = () => {
                 <motion.div
                   key={item.day}
                   layout
+                  tabIndex={0}
+                  role="button"
+                  aria-haspopup="dialog"
+                  aria-label={`View Daily UI challenge: ${item.title}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.35, delay: (idx % 12) * 0.03 }}
                   onClick={() => setActiveModalChallenge(item)}
-                  className="group relative rounded-3xl glass-panel border border-white/10 p-6 flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/40 transition-all duration-300 cursor-pointer overflow-hidden"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setActiveModalChallenge(item);
+                    }
+                  }}
+                  className="group relative rounded-3xl glass-panel border border-white/10 p-6 flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/40 transition-all duration-300 cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none"
                 >
                   {/* Subtle Top Gradient Bar */}
                   <div
@@ -358,8 +368,12 @@ export const DailyUISection: React.FC = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="dailyui-modal-title"
+                tabIndex={-1}
                 data-lenis-prevent
-                className="relative max-w-5xl w-[92vw] max-h-[88vh] overflow-hidden rounded-2xl bg-[#0d0914] border border-purple-900/40 shadow-2xl shadow-purple-950/80 z-10 my-auto flex flex-col md:flex-row h-full items-stretch"
+                className="relative max-w-5xl w-[92vw] max-h-[88vh] overflow-hidden rounded-2xl bg-[#0d0914] border border-purple-900/40 shadow-2xl shadow-purple-950/80 z-10 my-auto flex flex-col md:flex-row h-full items-stretch focus:outline-none"
               >
                 {/* Left Side: Full Image Display (55% to 60% Width) */}
                 <div className="md:w-3/5 w-full bg-black/50 p-6 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10 shrink-0 overflow-hidden">
@@ -404,7 +418,10 @@ export const DailyUISection: React.FC = () => {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-space text-2xl font-bold text-white tracking-tight mt-4 mb-3">
+                    <h3
+                      id="dailyui-modal-title"
+                      className="font-space text-2xl font-bold text-white tracking-tight mt-4 mb-3"
+                    >
                       {activeModalChallenge.title}
                     </h3>
 

@@ -140,7 +140,9 @@ export const Achievements: React.FC = () => {
               {/* Action Button: Sleek bottom button with micro-hover state */}
               <button
                 onClick={() => setSelectedCert(item)}
-                className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-purple-600/15 hover:bg-purple-600/30 border border-purple-500/30 hover:border-purple-500/60 text-xs font-mono-code font-semibold text-purple-200 hover:text-white transition-all cursor-pointer shadow-sm hover:shadow-purple-500/20 active:scale-98 relative z-10"
+                aria-haspopup="dialog"
+                aria-label={`View credentials for ${item.title}`}
+                className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-purple-600/15 hover:bg-purple-600/30 border border-purple-500/30 hover:border-purple-500/60 text-xs font-mono-code font-semibold text-purple-200 hover:text-white transition-all cursor-pointer shadow-sm hover:shadow-purple-500/20 active:scale-98 relative z-10 focus-visible:ring-2 focus-visible:ring-purple-400"
               >
                 <span>View Verification &amp; Docs</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-purple-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -164,7 +166,11 @@ export const Achievements: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl glass-panel bg-[#130f24]/95 border border-purple-500/30 shadow-2xl overflow-hidden my-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cert-modal-title"
+              tabIndex={-1}
+              className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl glass-panel bg-[#130f24]/95 border border-purple-500/30 shadow-2xl overflow-hidden my-auto focus:outline-none"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-purple-800/30 bg-white/[0.02]">
@@ -174,7 +180,7 @@ export const Achievements: React.FC = () => {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-space text-base sm:text-lg font-bold text-white truncate max-w-[240px] sm:max-w-md">
+                      <h3 id="cert-modal-title" className="font-space text-base sm:text-lg font-bold text-white truncate max-w-[240px] sm:max-w-md">
                         {selectedCert.title}
                       </h3>
                       {(selectedCert.badgeText || selectedCert.badge) && (

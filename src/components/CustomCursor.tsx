@@ -5,7 +5,14 @@ export const CustomCursor: React.FC = () => {
   const [isPointer, setIsPointer] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
+  const [isTouch] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+  });
 
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
@@ -18,15 +25,7 @@ export const CustomCursor: React.FC = () => {
   const trailingY = useSpring(mouseY, { damping: 18, stiffness: 140 });
 
   useEffect(() => {
-    // Detect touch device
-    if (
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0 ||
-      window.matchMedia('(pointer: coarse)').matches
-    ) {
-      setIsTouch(true);
-      return;
-    }
+    if (isTouch) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -67,7 +66,7 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [mouseX, mouseY, isVisible]);
+  }, [mouseX, mouseY, isVisible, isTouch]);
 
   if (isTouch || !isVisible) return null;
 
