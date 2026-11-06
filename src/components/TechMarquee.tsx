@@ -183,20 +183,23 @@ const techItems: TechItem[] = [
 ];
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: {},
   visible: {
-    opacity: 1,
     transition: {
-      staggerChildren: 0.07,
-      delayChildren: 0.2
-    }
-  }
+      staggerChildren: 0.1, // Har chip ke girne mein thoda gap aayega
+      delayChildren: 0.15,
+    },
+  },
 };
 
-const getItemVariants = (shouldReduceMotion: boolean | null): Variants => ({
+const getChipDropVariants = (shouldReduceMotion: boolean | null): Variants => ({
   hidden: shouldReduceMotion
     ? { opacity: 0 }
-    : { opacity: 0, y: -120, scale: 0.8 },
+    : {
+        opacity: 0,
+        y: -180, // Screen ke kaafi upar se drop shuru hoga
+        scale: 0.7,
+      },
   visible: {
     opacity: 1,
     y: 0,
@@ -205,16 +208,16 @@ const getItemVariants = (shouldReduceMotion: boolean | null): Variants => ({
       ? { duration: 0.2 }
       : {
           type: 'spring',
-          stiffness: 140,
-          damping: 12,
-          mass: 0.8
-        }
-  }
+          stiffness: 110,
+          damping: 12, // Landing par halka organic bounce
+          mass: 0.9,
+        },
+  },
 });
 
 export const TechMarquee: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
-  const itemVariants = getItemVariants(shouldReduceMotion);
+  const chipDropVariants = getChipDropVariants(shouldReduceMotion);
 
   return (
     <section className="py-28 md:py-36 min-h-[350px] flex flex-col items-center justify-center relative overflow-hidden border-y border-purple-900/20 bg-[#07040e]/60 backdrop-blur-sm select-none">
@@ -244,13 +247,13 @@ export const TechMarquee: React.FC = () => {
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.2 }}
         className="flex flex-wrap justify-center items-center gap-3.5 max-w-5xl mx-auto px-6 relative z-10"
       >
         {techItems.map((item) => (
           <motion.div
             key={item.name}
-            variants={itemVariants}
+            variants={chipDropVariants}
             whileHover={shouldReduceMotion ? undefined : { scale: 1.05, y: -2 }}
             whileTap={shouldReduceMotion ? undefined : { scale: 0.96 }}
             className="group bg-[#130f26]/80 backdrop-blur-md border border-purple-900/40 hover:border-pink-500/60 hover:shadow-lg hover:shadow-purple-500/20 px-5 py-2.5 rounded-xl text-purple-200 text-sm font-medium flex items-center gap-2.5 transition-all select-none cursor-pointer"
