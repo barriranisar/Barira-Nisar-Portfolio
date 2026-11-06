@@ -1,9 +1,28 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Briefcase, Calendar, Building2, Users, Sparkles, Globe } from 'lucide-react';
 import { experiencesData, extracurricularData } from '../data/experiences';
 
 export const Experience: React.FC = () => {
+  const [isDeckExpanded, setIsDeckExpanded] = useState(false);
+  const [isDeckHovered, setIsDeckHovered] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  // 6-Card Stacked Fan Deck Physics
+  const getDeckTransform = (index: number) => {
+    const rotations = [-8, 6, -4, 4, -2, 7];
+    const yOffsets = [0, 8, 16, 24, 30, 36];
+    const scales = [0.94, 0.95, 0.96, 0.97, 0.98, 1.0];
+    const hoverMultiplier = isDeckHovered && !isDeckExpanded ? 1.5 : 1;
+
+    return {
+      rotate: isDeckExpanded || shouldReduceMotion ? 0 : rotations[index % 6] * hoverMultiplier,
+      y: isDeckExpanded || shouldReduceMotion ? 0 : yOffsets[index % 6],
+      x: 0,
+      scale: isDeckExpanded ? 1 : scales[index % 6],
+      zIndex: isDeckExpanded ? 1 : (6 - index),
+    };
+  };
   return (
     <section id="experience" className="relative py-28 overflow-hidden">
       {/* Background Ambience */}
@@ -170,16 +189,77 @@ export const Experience: React.FC = () => {
             </motion.p>
           </div>
 
-          {/* Extracurricular Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {/* Interactive Deck Header Controls / Floating Indicator */}
+          <div className="flex flex-col items-center mb-6">
+            {!isDeckExpanded ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: [0, -4, 0] }}
+                transition={{ y: { repeat: Infinity, duration: 2.5, ease: 'easeInOut' } }}
+                onClick={() => setIsDeckExpanded(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-pink-500/40 text-pink-300 text-xs font-mono-code shadow-lg shadow-pink-950/40 hover:border-pink-400 hover:text-white hover:scale-105 transition-all cursor-pointer select-none"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-pink-400 animate-pulse" />
+                <span>Interactive Deck: Click to Reveal 6 Leadership Roles (✦)</span>
+              </motion.div>
+            ) : (
+              <div className="w-full flex justify-end max-w-6xl">
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={() => setIsDeckExpanded(false)}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full glass-panel border border-purple-500/40 text-purple-200 hover:text-white hover:border-pink-500/50 hover:bg-purple-900/20 text-xs font-mono-code transition-all cursor-pointer shadow-md"
+                  aria-label="Collapse cards back into deck"
+                >
+                  <span>Stack Roles</span>
+                  <span className="text-pink-400 font-bold text-sm">⤺</span>
+                </motion.button>
+              </div>
+            )}
+          </div>
+
+          {/* Interactive Stacked Fan Deck / 3x2 Grid Container */}
+          <div
+            className={
+              isDeckExpanded
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto'
+                : 'relative h-[520px] flex items-center justify-center cursor-pointer select-none group/deck'
+            }
+            onClick={() => {
+              if (!isDeckExpanded) setIsDeckExpanded(true);
+            }}
+            onMouseEnter={() => setIsDeckHovered(true)}
+            onMouseLeave={() => setIsDeckHovered(false)}
+          >
             {extracurricularData.map((item, idx) => (
               <motion.div
                 key={item.id || idx}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className="bg-[#120e22]/60 border border-purple-900/30 rounded-xl p-5 backdrop-blur-md hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/40 transition-all duration-300 flex flex-col justify-between"
+                layout
+                initial={false}
+                animate={getDeckTransform(idx)}
+                transition={{
+                  type: 'spring',
+                  stiffness: 95,
+                  damping: 14,
+                  mass: 1,
+                  delay: isDeckExpanded ? idx * 0.08 : (5 - idx) * 0.04,
+                }}
+                whileHover={
+                  isDeckExpanded
+                    ? { scale: 1.02, y: -4, transition: { duration: 0.2 } }
+                    : undefined
+                }
+                onClick={(e) => {
+                  if (isDeckExpanded) e.stopPropagation();
+                }}
+                style={{
+                  transformOrigin: 'center bottom',
+                }}
+                className={`${
+                  isDeckExpanded
+                    ? 'relative w-full h-full'
+                    : 'absolute w-full max-w-[340px] sm:max-w-[420px]'
+                } bg-[#120e22]/90 border border-purple-900/40 rounded-xl p-5 backdrop-blur-md hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-950/50 transition-colors duration-300 flex flex-col justify-between shadow-xl shadow-black/40`}
               >
                 <div>
                   {/* Top Badge & Period */}
