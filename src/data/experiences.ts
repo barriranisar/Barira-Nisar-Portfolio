@@ -2,6 +2,24 @@ import type { ExperienceItem, ExtracurricularItem } from '../types';
 
 export const experiencesData: ExperienceItem[] = [
   {
+    id: 'exp-exps-nexus',
+    role: 'Data Science Intern',
+    company: 'EXPS Nexus (Expert Petroleum Services)',
+    organization: 'EXPS Nexus (Expert Petroleum Services)',
+    period: 'Aug 2026 - Sep 2026',
+    date: 'Aug 2026 - Oct 2026',
+    location: 'Remote',
+    type: 'Internship',
+    badgeColor: 'border-cyan-500/40 text-cyan-300 bg-cyan-500/10',
+    description: [
+      'Engineered end-to-end machine learning pipelines for predictive classification and regression models.',
+      'Conducted exploratory data analysis (EDA) and data cleansing workflows across multi-variable domain datasets.',
+      'Designed interactive dashboards and statistical visualizations to translate model outputs into clear business insights.'
+    ],
+    skills: ['Python', 'Pandas', 'Scikit-Learn', 'Machine Learning', 'EDA', 'Data Visualization'],
+    skillsGained: ['Python', 'Pandas', 'Scikit-Learn', 'Machine Learning', 'EDA', 'Data Visualization']
+  },
+  {
     id: 'exp-encoderx',
     role: 'Data Science Intern',
     company: 'EncoderX',
@@ -18,24 +36,6 @@ export const experiencesData: ExperienceItem[] = [
     ],
     skills: ['Python', 'Scikit-Learn', 'Data Pipelines', 'Predictive Modeling', 'Feature Engineering'],
     skillsGained: ['Python', 'Scikit-Learn', 'Data Pipelines', 'Predictive Modeling', 'Feature Engineering']
-  },
-  {
-    id: 'exp-exps-nexus',
-    role: 'Data Science Intern',
-    company: 'EXPS Nexus (Expert Petroleum Services)',
-    organization: 'EXPS Nexus (Expert Petroleum Services)',
-    period: 'Aug 2026 - Oct 2026',
-    date: 'Aug 2026 - Oct 2026',
-    location: 'Remote',
-    type: 'Internship',
-    badgeColor: 'border-cyan-500/40 text-cyan-300 bg-cyan-500/10',
-    description: [
-      'Engineered end-to-end machine learning pipelines for predictive classification and regression models.',
-      'Conducted exploratory data analysis (EDA) and data cleansing workflows across multi-variable domain datasets.',
-      'Designed interactive dashboards and statistical visualizations to translate model outputs into clear business insights.'
-    ],
-    skills: ['Python', 'Pandas', 'Scikit-Learn', 'Machine Learning', 'EDA', 'Data Visualization'],
-    skillsGained: ['Python', 'Pandas', 'Scikit-Learn', 'Machine Learning', 'EDA', 'Data Visualization']
   }
 ];
 
