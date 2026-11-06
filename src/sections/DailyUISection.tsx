@@ -226,21 +226,7 @@ export const DailyUISection: React.FC = () => {
             A curated selection of interface designs exploring UX patterns, interactive micro-delights, brand aesthetics, and typography systems.
           </motion.p>
 
-          {/* Sprint Highlights Pill */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.25 }}
-            className="inline-flex items-center gap-3 mt-6 px-4 py-2 rounded-2xl glass-panel border border-pink-500/30 text-xs font-mono-code text-zinc-300"
-          >
-            <div className="flex items-center gap-1.5 text-pink-400 font-bold">
-              <Sparkles className="w-4 h-4 text-pink-400" />
-              <span>Curated UI Sprint Highlights</span>
-            </div>
-            <span className="text-zinc-600">|</span>
-            <span className="text-purple-300">Days 07, 08, 09, 22, 25, 30</span>
-          </motion.div>
+          
         </div>
 
         {/* Challenge Cards Grid */}

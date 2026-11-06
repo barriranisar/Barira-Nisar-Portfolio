@@ -62,13 +62,7 @@ export const About: React.FC = () => {
             />
 
             {/* Discipline Summary Pill */}
-            <div className="mt-6 p-4 rounded-2xl glass-panel border border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-300">
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                <span>2 Core Disciplines</span>
-              </span>
-              <span className="text-zinc-500">Logic • Code</span>
-            </div>
+            
           </motion.div>
 
           {/* Right Column: Narrative Story & Three Interactive Expertise Experiences */}

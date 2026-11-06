@@ -226,16 +226,8 @@ export const Hero: React.FC<HeroProps> = ({
           className="mt-14 flex flex-col items-center gap-2 cursor-pointer group"
           onClick={() => scrollTo('about')}
         >
-          <span className="text-[11px] font-mono-code text-zinc-400 tracking-widest uppercase group-hover:text-purple-400 transition-colors">
-            Scroll To Discover
-          </span>
-          <div className="w-5 h-9 rounded-full border-2 border-white/20 flex items-start justify-center p-1 group-hover:border-pink-500/60 transition-colors">
-            <motion.div
-              animate={{ y: [0, 14, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-1.5 h-1.5 rounded-full bg-pink-400 shadow-md shadow-pink-500/50"
-            />
-          </div>
+         
+          
         </motion.div>
       </div>
     </section>

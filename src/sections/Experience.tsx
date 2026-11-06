@@ -200,7 +200,7 @@ export const Experience: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-pink-500/40 text-pink-300 text-xs font-mono-code shadow-lg shadow-pink-950/40 hover:border-pink-400 hover:text-white hover:scale-105 transition-all cursor-pointer select-none"
               >
                 <Sparkles className="w-3.5 h-3.5 text-pink-400 animate-pulse" />
-                <span>Interactive Deck: Click to Reveal 6 Leadership Roles (✦)</span>
+                <span>Click to Reveal Leadership Roles (✦)</span>
               </motion.div>
             ) : (
               <div className="w-full flex justify-end max-w-6xl">
