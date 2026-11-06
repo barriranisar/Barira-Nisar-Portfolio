@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FolderGit2, ArrowUpRight, Sparkles, Eye, Code, Database, Gamepad2 } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import type { ProjectItem } from '../types';
-import { ProjectModal } from '../components/ProjectModal';
+
+const ProjectModal = React.lazy(() =>
+  import('../components/ProjectModal').then((m) => ({ default: m.ProjectModal }))
+);
 
 // Clean SVG GitHub icon
 const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
@@ -206,10 +209,14 @@ export const Projects: React.FC = () => {
       </div>
 
       {/* Interactive Project Details Modal */}
-      <ProjectModal
-        project={activeModalProject}
-        onClose={() => setActiveModalProject(null)}
-      />
+      {activeModalProject && (
+        <Suspense fallback={null}>
+          <ProjectModal
+            project={activeModalProject}
+            onClose={() => setActiveModalProject(null)}
+          />
+        </Suspense>
+      )}
     </section>
   );
 };

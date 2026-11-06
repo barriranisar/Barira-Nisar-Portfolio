@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Preloader } from './components/Preloader';
 import { CustomCursor } from './components/CustomCursor';
 import { CanvasBackground } from './components/CanvasBackground';
@@ -6,27 +6,40 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './sections/Hero';
 import { About } from './sections/About';
 import { Projects } from './sections/Projects';
-import { DailyUISection } from './sections/DailyUISection';
 import { Experience } from './sections/Experience';
-import { Achievements } from './sections/Achievements';
-import { Contact } from './sections/Contact';
 import { Footer } from './sections/Footer';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
+
+// Lazy-load heavy below-the-fold sections
+const DailyUISection = React.lazy(() =>
+  import('./sections/DailyUISection').then((m) => ({ default: m.DailyUISection }))
+);
+const Photography = React.lazy(() =>
+  import('./sections/Photography').then((m) => ({ default: m.Photography }))
+);
+const Achievements = React.lazy(() =>
+  import('./sections/Achievements').then((m) => ({ default: m.Achievements }))
+);
+const Contact = React.lazy(() =>
+  import('./sections/Contact').then((m) => ({ default: m.Contact }))
+);
 
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   // Activate Lenis smooth scrolling
   useSmoothScroll();
 
-  // Active section scroll tracking
+  // Active section scroll tracking & scroll progress calculation
   useEffect(() => {
     const sectionIds = [
       'home',
       'about',
       'projects',
       'daily-ui',
+      'photography',
       'experience',
       'achievements',
       'contact'
@@ -34,10 +47,15 @@ export const App: React.FC = () => {
 
     let ticking = false;
 
-    const determineActiveSection = () => {
+    const determineActiveSectionAndProgress = () => {
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
+      const maxScroll = Math.max(docHeight - viewportHeight, 1);
+
+      // Normalized 0 to 1 progress across full document
+      const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+      setScrollProgress(progress);
 
       // When reaching near the bottom, activate contact
       if (scrollY + viewportHeight >= docHeight - 70) {
@@ -66,7 +84,7 @@ export const App: React.FC = () => {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          determineActiveSection();
+          determineActiveSectionAndProgress();
           ticking = false;
         });
         ticking = true;
@@ -74,10 +92,30 @@ export const App: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    determineActiveSection();
+    determineActiveSectionAndProgress();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loading]);
+
+  // Three discipline colors:
+  // Data Science = #06b6d4, Web Engineering = #8b5cf6, Photography = #f97316
+  const getDisciplineColor = (section: string): string => {
+    switch (section) {
+      case 'photography':
+        return '#f97316';
+      case 'experience':
+      case 'achievements':
+        return '#06b6d4';
+      case 'projects':
+      case 'daily-ui':
+      case 'about':
+      case 'contact':
+      default:
+        return '#8b5cf6';
+    }
+  };
+
+  const activeColor = getDisciplineColor(activeSection);
 
   return (
     <>
@@ -96,13 +134,22 @@ export const App: React.FC = () => {
 
         {/* Sections */}
         <main>
-          <Hero />
+          <Hero accentColor={activeColor} scrollProgress={scrollProgress} />
           <About />
           <Projects />
-          <DailyUISection />
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <DailyUISection />
+          </Suspense>
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <Photography />
+          </Suspense>
           <Experience />
-          <Achievements />
-          <Contact />
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <Achievements />
+          </Suspense>
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <Contact />
+          </Suspense>
         </main>
 
         {/* Global Footer */}

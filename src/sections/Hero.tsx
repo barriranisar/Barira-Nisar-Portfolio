@@ -1,15 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, FolderGit2, Mail, Terminal, Database } from 'lucide-react';
 import { profileData } from '../data/profile';
-import { Canvas3DHero } from '../components/Canvas3DHero';
+import { Canvas3DHeroFallback } from '../components/Canvas3DHeroFallback';
+
+const Canvas3DHeroLazy = React.lazy(() =>
+  import('../components/Canvas3DHero').then((m) => ({ default: m.Canvas3DHero }))
+);
 
 const roleIcons: Record<string, React.ReactNode> = {
   'Data Scientist': <Database className="w-4 h-4 text-cyan-400" />,
   'Web Developer': <Terminal className="w-4 h-4 text-purple-400" />
 };
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+  accentColor?: string;
+  scrollProgress?: number;
+}
+
+export const Hero: React.FC<HeroProps> = ({
+  accentColor = '#8b5cf6',
+  scrollProgress = 0
+}) => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
 
   useEffect(() => {
@@ -29,9 +41,11 @@ export const Hero: React.FC = () => {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12"
     >
-      {/* 3D WebGL Canvas Layer */}
+      {/* 3D WebGL Canvas Layer (Lazy Loaded with Static Fallback) */}
       <div className="absolute inset-0 z-0">
-        <Canvas3DHero />
+        <Suspense fallback={<Canvas3DHeroFallback />}>
+          <Canvas3DHeroLazy accentColor={accentColor} scrollProgress={scrollProgress} />
+        </Suspense>
       </div>
 
       {/* Atmospheric Radial Shading to Guarantee Text Legibility */}

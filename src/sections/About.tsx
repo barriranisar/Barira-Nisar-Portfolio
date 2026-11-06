@@ -8,8 +8,8 @@ export const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   const identityIcons = [
-    <Database className="w-5 h-5 text-cyan-400" />,
-    <Terminal className="w-5 h-5 text-purple-400" />
+    <Database key="data-science-icon" className="w-5 h-5 text-cyan-400" />,
+    <Terminal key="web-engineering-icon" className="w-5 h-5 text-purple-400" />
   ];
 
   return (

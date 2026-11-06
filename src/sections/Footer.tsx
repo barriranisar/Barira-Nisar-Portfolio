@@ -2,12 +2,12 @@ import React from 'react';
 import { ArrowUp, Terminal, Database } from 'lucide-react';
 import { profileData } from '../data/profile';
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="relative pt-16 pb-12 border-t border-white/10 bg-[#06030c] overflow-hidden">
@@ -58,7 +58,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Metadata & Credits */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono-code text-zinc-500 text-center sm:text-left">
-          <p>© {currentYear} {profileData.name}. All rights reserved.</p>
+          <p>© {CURRENT_YEAR} {profileData.name}. All rights reserved.</p>
 
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 text-zinc-400">
