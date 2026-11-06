@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Send, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Send, MapPin, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { profileData } from '../data/profile';
 
 // Clean SVG brand icons
@@ -44,46 +45,120 @@ export const Contact: React.FC = () => {
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    botField: '' // Honeypot field for bot protection
   });
 
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'ready_to_send' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [formStatus, setFormStatus] = useState<
+    'idle' | 'submitting' | 'success' | 'fallback_opened' | 'error'
+  >('idle');
+  const [statusMessage, setStatusMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const triggerMailtoFallback = (name: string, email: string, subject: string, message: string) => {
+    const encodedSubject = encodeURIComponent(
+      subject || `Collaboration Inquiry from ${name}`
+    );
+    const encodedBody = encodeURIComponent(
+      `Hi Barira,\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n`
+    );
+    window.location.href = `mailto:${profileData.contactInfo.email}?subject=${encodedSubject}&body=${encodedBody}`;
+    setFormStatus('fallback_opened');
+    setStatusMessage(
+      `Your default email client was opened. If it didn't trigger, please write directly to ${profileData.contactInfo.email}`
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot check: If filled, silently mock success
+    if (formData.botField.trim() !== '') {
+      setFormStatus('success');
+      setStatusMessage('Thank you for reaching out!');
+      return;
+    }
 
     // Validation
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setFormStatus('error');
-      setErrorMessage('Please fill in your name, email address, and message.');
+      setStatusMessage('Please fill in your name, email address, and message.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(formData.email.trim())) {
       setFormStatus('error');
-      setErrorMessage('Please provide a valid email address.');
+      setStatusMessage('Please provide a valid email address.');
       return;
     }
 
     setFormStatus('submitting');
+    setStatusMessage('');
 
-    // Mailto fallback packaging
-    setTimeout(() => {
-      const subject = encodeURIComponent(formData.subject || `Collaboration Inquiry from ${formData.name}`);
-      const body = encodeURIComponent(
-        `Hi Barira,\n\nName: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}\n`
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          botField: formData.botField
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        setFormStatus('success');
+        setStatusMessage(
+          data.message || 'Your message has been sent successfully! I will respond promptly.'
+        );
+        // Fire confetti celebration
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.8 },
+          colors: ['#8b5cf6', '#ec4899', '#06b6d4', '#f97316']
+        });
+        // Clear fields
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+          botField: ''
+        });
+      } else if (data.fallback) {
+        // Fall back to direct email client
+        triggerMailtoFallback(
+          formData.name,
+          formData.email,
+          formData.subject,
+          formData.message
+        );
+      } else {
+        setFormStatus('error');
+        setStatusMessage(
+          data.message || 'Unable to send message via server. Please try the mailto link below.'
+        );
+      }
+    } catch {
+      // Offline / dev server fallback
+      triggerMailtoFallback(
+        formData.name,
+        formData.email,
+        formData.subject,
+        formData.message
       );
-
-      // Trigger user's email client directly
-      window.location.href = `mailto:${profileData.contactInfo.email}?subject=${subject}&body=${body}`;
-      setFormStatus('ready_to_send');
-    }, 600);
+    }
   };
 
   return (
@@ -119,12 +194,13 @@ export const Contact: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-zinc-300 mt-4 text-base sm:text-lg leading-relaxed font-sans"
           >
-            Let's connect, collaborate and create something meaningful.
+            Whether it's machine learning pipelines, full-stack software development, or creative visual collaborations — let's build something remarkable together.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column: Direct Info & Social Channels */}
+        {/* 2-Column Contact Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Left Column: Direct Info & Social Hub */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -132,60 +208,49 @@ export const Contact: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5 flex flex-col gap-6"
           >
-            {/* Primary Contact Card */}
-            <div className="rounded-3xl glass-panel border border-white/10 p-8 space-y-6">
-              <div>
-                <h3 className="font-space text-2xl font-bold text-white mb-2">
-                  Direct Inquiries
-                </h3>
-                <p className="text-zinc-300 text-sm leading-relaxed">
-                  Whether discussing a Data Science challenge, an ambitious Web Development project, or keynote event photography coverage—my inbox is open.
-                </p>
-              </div>
+            {/* Quick Contact Card */}
+            <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-6">
+              <h3 className="font-space text-xl font-bold text-white">
+                Contact Information
+              </h3>
 
-              {/* Email Block */}
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
-                  <Mail className="w-6 h-6" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-xs font-mono-code text-zinc-400 uppercase">
-                    Direct Email
-                  </span>
-                  <a
-                    href={`mailto:${profileData.contactInfo.email}`}
-                    className="block text-sm sm:text-base font-semibold text-white hover:text-pink-400 transition-colors truncate"
-                  >
-                    {profileData.contactInfo.email}
-                  </a>
-                </div>
-              </div>
+              <div className="space-y-4">
+                <a
+                  href={`mailto:${profileData.contactInfo.email}`}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/40 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-mono-code text-zinc-400 uppercase tracking-wider block">
+                      Direct Email
+                    </span>
+                    <span className="text-sm font-semibold text-white group-hover:text-purple-300 transition-colors">
+                      {profileData.contactInfo.email}
+                    </span>
+                  </div>
+                </a>
 
-              {/* Location Block */}
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 shrink-0">
-                  <MapPin className="w-6 h-6" />
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-mono-code text-zinc-400 uppercase tracking-wider block">
+                      Location
+                    </span>
+                    <span className="text-sm font-semibold text-white">
+                      {profileData.contactInfo.location}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-mono-code text-zinc-400 uppercase">
-                    Location
-                  </span>
-                  <p className="text-sm sm:text-base font-semibold text-white">
-                    {profileData.contactInfo.location}
-                  </p>
-                </div>
-              </div>
-
-              {/* Status Badge */}
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-xs text-emerald-300">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>{profileData.contactInfo.availability}</span>
               </div>
             </div>
 
-            {/* Social Channels */}
-            <div className="rounded-3xl glass-panel border border-white/10 p-6">
-              <h4 className="font-space text-sm font-bold text-white uppercase tracking-wider mb-4">
+            {/* Social Links Matrix */}
+            <div className="p-8 rounded-3xl glass-panel border border-white/10">
+              <h4 className="text-xs font-mono-code uppercase text-zinc-400 tracking-wider mb-4 font-semibold">
                 Connect on Social Networks
               </h4>
               <div className="grid grid-cols-3 gap-3">
@@ -195,7 +260,7 @@ export const Contact: React.FC = () => {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group border border-white/10 hover:border-pink-500/50 bg-[#161026] hover:bg-[#1a132e] flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-300 cursor-pointer shadow-md hover:shadow-pink-950/40 hover:scale-[1.03]"
+                    className="group border border-white/10 hover:border-pink-500/50 bg-[#161026] hover:bg-[#1a132e] flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-300 cursor-pointer shadow-md hover:shadow-pink-950/40 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-pink-400"
                   >
                     <div className="text-zinc-400 group-hover:text-pink-400 transition-colors mb-2">
                       {socialIconMap[social.platform] || socialIconMap[social.icon]}
@@ -209,7 +274,7 @@ export const Contact: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Right Column: Interactive Form */}
+          {/* Right Column: Serverless Form */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -218,34 +283,65 @@ export const Contact: React.FC = () => {
             className="lg:col-span-7"
           >
             <div className="rounded-3xl glass-panel border border-white/10 p-8 sm:p-10">
-              <h3 className="font-space text-2xl font-bold text-white mb-2">
-                Send a Message
-              </h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-space text-2xl font-bold text-white">
+                  Send a Message
+                </h3>
+                <span className="text-[11px] font-mono-code text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/20">
+                  Direct Dispatch
+                </span>
+              </div>
               <p className="text-zinc-300 text-sm mb-8 font-sans">
-                Fill in the details below. This will launch your email client preloaded with your inquiry.
+                Submit an inquiry directly or request collaboration. Messages are securely routed via modern serverless API.
               </p>
 
               {/* Status Alert Banner */}
-              {formStatus === 'ready_to_send' && (
-                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3 text-xs text-emerald-300">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block text-sm font-bold text-emerald-200">
-                      Email Dispatch Prepared!
-                    </strong>
-                    Your mail client has been opened with your prefilled message. If it didn't trigger automatically, feel free to email directly at <code className="text-white font-bold">{profileData.contactInfo.email}</code>.
+              <div aria-live="polite">
+                {formStatus === 'success' && (
+                  <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3 text-xs text-emerald-300">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-sm font-bold text-emerald-200">
+                        Message Dispatched!
+                      </strong>
+                      {statusMessage}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {formStatus === 'error' && (
-                <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-3 text-xs text-rose-300">
-                  <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
+                {formStatus === 'fallback_opened' && (
+                  <div className="mb-6 p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-start gap-3 text-xs text-cyan-300">
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-sm font-bold text-cyan-200">
+                        Email Client Triggered
+                      </strong>
+                      {statusMessage}
+                    </div>
+                  </div>
+                )}
+
+                {formStatus === 'error' && (
+                  <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-3 text-xs text-rose-300">
+                    <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                    <span>{statusMessage}</span>
+                  </div>
+                )}
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Honeypot field for bot mitigation (hidden from real users) */}
+                <input
+                  type="text"
+                  name="botField"
+                  value={formData.botField}
+                  onChange={handleChange}
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                />
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   {/* Name Input */}
                   <div className="space-y-2">
@@ -259,7 +355,7 @@ export const Contact: React.FC = () => {
                       onChange={handleChange}
                       placeholder="e.g. Alex Vance"
                       required
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors focus-visible:ring-1 focus-visible:ring-purple-400"
                     />
                   </div>
 
@@ -275,7 +371,7 @@ export const Contact: React.FC = () => {
                       onChange={handleChange}
                       placeholder="alex@domain.com"
                       required
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors focus-visible:ring-1 focus-visible:ring-purple-400"
                     />
                   </div>
                 </div>
@@ -291,7 +387,7 @@ export const Contact: React.FC = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="e.g. Data Analytics / Web Collaboration / Event Photography"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors focus-visible:ring-1 focus-visible:ring-purple-400"
                   />
                 </div>
 
@@ -307,7 +403,7 @@ export const Contact: React.FC = () => {
                     onChange={handleChange}
                     placeholder="Share what you'd like to collaborate on..."
                     required
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500 focus:outline-none text-white text-sm placeholder:text-zinc-500 transition-colors resize-none focus-visible:ring-1 focus-visible:ring-purple-400"
                   />
                 </div>
 
@@ -315,10 +411,19 @@ export const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={formStatus === 'submitting'}
-                  className="w-full py-4 rounded-2xl font-semibold text-sm text-white bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:from-purple-500 hover:via-pink-500 hover:to-orange-400 shadow-xl shadow-pink-600/25 hover:shadow-pink-600/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-4 rounded-2xl font-semibold text-sm text-white bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:from-purple-500 hover:via-pink-500 hover:to-orange-400 shadow-xl shadow-pink-600/25 hover:shadow-pink-600/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-pink-400"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>{formStatus === 'submitting' ? 'Preparing Email...' : 'Send Message'}</span>
+                  {formStatus === 'submitting' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
