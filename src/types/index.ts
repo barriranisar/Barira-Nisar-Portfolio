@@ -1,4 +1,4 @@
-export type IdentityRole = 'Data Scientist' | 'Web Developer';
+export type IdentityRole = 'Data Scientist' | 'Web Developer' | 'Photographer';
 
 export interface SocialLink {
   platform: string;

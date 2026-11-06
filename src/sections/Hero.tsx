@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, FolderGit2, Mail, Terminal, Database } from 'lucide-react';
+import { Sparkles, FolderGit2, Mail, Terminal, Database, Camera } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { Canvas3DHeroFallback } from '../components/Canvas3DHeroFallback';
 
@@ -10,7 +10,8 @@ const Canvas3DHeroLazy = React.lazy(() =>
 
 const roleIcons: Record<string, React.ReactNode> = {
   'Data Scientist': <Database className="w-4 h-4 text-cyan-400" />,
-  'Web Developer': <Terminal className="w-4 h-4 text-purple-400" />
+  'Web Developer': <Terminal className="w-4 h-4 text-purple-400" />,
+  'Photographer': <Camera className="w-4 h-4 text-orange-400" />
 };
 
 interface HeroProps {

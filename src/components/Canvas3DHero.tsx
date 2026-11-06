@@ -433,7 +433,7 @@ export const Canvas3DHero: React.FC<Canvas3DHeroProps> = ({
         }
       }
     };
-  }, []);
+  }, [isWebGLSupported]);
 
   if (!isWebGLSupported) {
     return <Canvas3DHeroFallback className={className} />;

@@ -39,6 +39,14 @@ export const Projects: React.FC = () => {
     return <Code className="w-4 h-4 text-purple-400" />;
   };
 
+  const getRoleColor = (role: string) => {
+    const lower = role.toLowerCase();
+    if (lower.includes('data') || lower.includes('machine learning')) return 'text-cyan-400';
+    if (lower.includes('photo')) return 'text-[#f97316]';
+    if (lower.includes('game')) return 'text-amber-400';
+    return 'text-purple-400';
+  };
+
   return (
     <section id="projects" className="relative py-28 overflow-hidden">
       {/* Background Accent Shading */}
@@ -143,7 +151,7 @@ export const Projects: React.FC = () => {
                 <div className="p-7 sm:p-8 flex flex-col justify-between flex-1">
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-xs font-mono-code text-pink-400">
+                      <span className={`text-xs font-mono-code ${getRoleColor(project.roleIdentity)}`}>
                         {project.roleIdentity}
                       </span>
                       <span className="text-[11px] font-mono-code text-zinc-400">

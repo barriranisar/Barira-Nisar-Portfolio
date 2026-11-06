@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Database, Terminal, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { HoloAvatarCard } from '../components/HoloAvatarCard';
+import { ExpertiseExperiences } from '../components/ExpertiseExperiences';
 
 export const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
-
-  const identityIcons = [
-    <Database key="data-science-icon" className="w-5 h-5 text-cyan-400" />,
-    <Terminal key="web-engineering-icon" className="w-5 h-5 text-purple-400" />
-  ];
 
   return (
     <section id="about" className="relative py-28 overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-1/2 left-0 w-96 h-96 -translate-y-1/2 rounded-full bg-purple-900/10 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-pink-900/10 blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-cyan-900/10 blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Pill & Header */}
@@ -25,7 +21,7 @@ export const About: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-xs font-mono-code text-pink-400 border border-pink-500/30 mb-4"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-xs font-mono-code text-cyan-400 border border-cyan-500/30 mb-4"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>WHO I AM</span>
@@ -50,23 +46,32 @@ export const About: React.FC = () => {
           </motion.p>
         </div>
 
-        {/* Editorial Layout: Profile Artwork + Narrative Story */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Editorial Layout: Profile Artwork + Narrative Story & Tri-Discipline Experiences */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Visual Profile Card with 3D Holographic Tilt */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="lg:col-span-5 relative"
+            className="lg:col-span-5 relative lg:sticky lg:top-28"
           >
             <HoloAvatarCard
               imageSrc="/images/profile/avatar.jpeg"
               name={profileData.name}
             />
+
+            {/* Discipline Summary Pill */}
+            <div className="mt-6 p-4 rounded-2xl glass-panel border border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-300">
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span>3 Disciplines, 1 Vision</span>
+              </span>
+              <span className="text-zinc-500">Logic • Code • Optics</span>
+            </div>
           </motion.div>
 
-          {/* Right Column: Editorial Narrative & Tri-Facet Switcher */}
+          {/* Right Column: Narrative Story & Three Interactive Expertise Experiences */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -85,69 +90,33 @@ export const About: React.FC = () => {
               </div>
             </div>
 
-            {/* Dual-Identity Interactive Showcase Tabs */}
+            {/* Tri-Discipline Interactive Expertise Experiences (Regression, Code Editor, Camera Viewfinder) */}
             <div className="mt-4 pt-6 border-t border-white/10">
-              <p className="text-xs font-mono-code text-zinc-400 uppercase tracking-wider mb-4">
-                Explore The Two Core Pillars:
-              </p>
-
-              {/* Tabs Bar */}
-              <div className="grid grid-cols-2 gap-3 p-1.5 rounded-2xl glass-panel border border-white/10 mb-4">
-                {profileData.identities.map((identity, idx) => (
-                  <button
-                    key={identity.title}
-                    onClick={() => setActiveTab(idx)}
-                    className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                      activeTab === idx
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-600/30'
-                        : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {identityIcons[idx]}
-                    <span className="hidden sm:inline">{identity.title}</span>
-                  </button>
-                ))}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-mono-code text-zinc-400 uppercase tracking-wider font-semibold">
+                  Interactive Discipline Showcases:
+                </p>
+                <span className="text-[11px] font-mono-code text-cyan-400">
+                  Live Interactive Sandboxes
+                </span>
               </div>
 
-              {/* Active Tab Panel */}
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="p-5 rounded-2xl glass-panel border border-white/10 relative overflow-hidden"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <span className="text-xs font-mono-code text-pink-400 uppercase tracking-widest font-bold">
-                      {profileData.identities[activeTab].tagline}
-                    </span>
-                    <h4 className="font-space text-xl font-bold text-white mt-1 mb-2">
-                      {profileData.identities[activeTab].title} Mindset
-                    </h4>
-                    <p className="text-zinc-300 text-sm leading-relaxed">
-                      {profileData.identities[activeTab].description}
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 shrink-0">
-                    {identityIcons[activeTab]}
-                  </div>
-                </div>
+              {/* Render Tabbed Expertise Experiences (Real Linear Regression, Code Editor, Camera Viewfinder) */}
+              <ExpertiseExperiences activeTab={activeTab} onTabChange={setActiveTab} />
 
-                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-400">
-                  <span className="flex items-center gap-1.5 text-zinc-300">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    Analytical &amp; Creative Synergy
-                  </span>
-                  <a
-                    href="#projects"
-                    className="text-pink-400 hover:text-pink-300 flex items-center gap-1 font-semibold"
-                  >
-                    <span>Explore Selected Works</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </motion.div>
+              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-400">
+                <span className="flex items-center gap-1.5 text-zinc-300">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  Analytical, Technical &amp; Visual Synergy
+                </span>
+                <a
+                  href="#projects"
+                  className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold"
+                >
+                  <span>Explore Selected Works</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -155,4 +124,3 @@ export const About: React.FC = () => {
     </section>
   );
 };
-

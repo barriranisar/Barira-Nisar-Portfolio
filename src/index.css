@@ -1,10 +1,26 @@
 @import "tailwindcss";
 
+@theme {
+  --color-data-science: #06b6d4;
+  --color-web-engineering: #8b5cf6;
+  --color-photography: #f97316;
+  --color-coral: #f97316;
+  --color-rare-pink: #ec4899;
+  --color-rare-blue: #3b82f6;
+}
+
 @layer base {
   :root {
+    --discipline-data-science: #06b6d4;
+    --discipline-web-engineering: #8b5cf6;
+    --discipline-photography: #f97316;
+    --rare-pink: #ec4899;
+    --rare-blue: #3b82f6;
+    --theme-bg: #07040e;
+
     --color-electric-purple: #8b5cf6;
     --color-vibrant-blue: #3b82f6;
-    --color-coral: #ff6b6b;
+    --color-coral: #f97316;
     --color-hot-pink: #ec4899;
     --color-neon-cyan: #06b6d4;
     --color-orange: #f97316;
