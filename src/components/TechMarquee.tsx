@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import React from 'react';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 
 interface TechItem {
   name: string;
@@ -182,80 +182,98 @@ const techItems: TechItem[] = [
   }
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.07,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const getItemVariants = (shouldReduceMotion: boolean | null): Variants => ({
+  hidden: shouldReduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, y: -120, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: shouldReduceMotion
+      ? { duration: 0.2 }
+      : {
+          type: 'spring',
+          stiffness: 140,
+          damping: 12,
+          mass: 0.8
+        }
+  }
+});
+
 export const TechMarquee: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-
-  // Scroll-linked gravity reveal physics
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'center center'],
-  });
-
-  const rawY = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [-50, 0]);
-  const rawOpacity = useTransform(scrollYProgress, [0, 0.4, 1], [0, 0.8, 1]);
-
-  const springY = useSpring(rawY, { stiffness: 120, damping: 14 });
-  const springOpacity = useSpring(rawOpacity, { stiffness: 120, damping: 14 });
-
-  // Duplicate for seamless infinite loop (0% to -50% translation)
-  const displayItems = [...techItems, ...techItems];
+  const itemVariants = getItemVariants(shouldReduceMotion);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full py-6 md:py-8 overflow-hidden border-y border-purple-900/20 bg-[#07040e]/80 backdrop-blur-sm group/marquee select-none"
-    >
+    <section className="py-28 md:py-36 min-h-[350px] flex flex-col items-center justify-center relative overflow-hidden border-y border-purple-900/20 bg-[#07040e]/60 backdrop-blur-sm select-none">
       {/* Ambient background glow accents */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-64 h-24 bg-purple-600/10 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-64 h-24 bg-cyan-600/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-96 h-48 bg-purple-600/10 blur-[100px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 right-1/3 -translate-y-1/2 w-96 h-48 bg-cyan-600/10 blur-[100px] pointer-events-none rounded-full" />
 
-      {/* Scroll-Linked Gravity / Falling Reveal Motion Wrapper */}
+      {/* Subtle Section Header */}
       <motion.div
-        style={{
-          y: springY,
-          opacity: springOpacity,
-        }}
-        className="w-full"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: -20 }}
+        whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center text-center px-4 mb-10 md:mb-12 relative z-10"
       >
-        {/* Masked Marquee Wrapper with soft edge fades */}
-        <div className="mask-marquee w-full overflow-hidden">
-          <div className="animate-marquee flex items-center gap-3 py-2 w-max">
-            {displayItems.map((item, idx) => (
-              <motion.div
-                key={`${item.name}-${idx}`}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: -24 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 120,
-                  damping: 14,
-                  delay: shouldReduceMotion ? 0 : (idx % techItems.length) * 0.035,
-                }}
-                className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-[#120e24]/80 backdrop-blur-md border border-purple-900/30 text-purple-200 hover:border-pink-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 cursor-pointer select-none shrink-0 hover:scale-105 active:scale-95"
-              >
-                {/* Official Tech Icon */}
-                <span
-                  className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
-                  style={{ color: item.color }}
-                  aria-hidden="true"
-                >
-                  {item.svgIcon}
-                </span>
-
-                {/* Tech Label */}
-                <span className="font-space text-xs sm:text-sm font-semibold tracking-wide whitespace-nowrap text-purple-100 group-hover:text-white transition-colors">
-                  {item.name}
-                </span>
-
-                {/* Outward Diagonal Arrow */}
-                <ArrowUpRight className="w-3.5 h-3.5 text-purple-400/60 group-hover:text-pink-300 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" />
-              </motion.div>
-            ))}
-          </div>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-900/30 border border-purple-500/30 text-purple-300 text-xs font-mono-code mb-3 tracking-wider uppercase">
+          <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+          <span>TECHNICAL ARSENAL &amp; TOOLKIT</span>
         </div>
+        <p className="text-zinc-400 text-sm sm:text-base font-sans max-w-lg">
+          Hands-on libraries, languages, and frameworks
+        </p>
       </motion.div>
-    </div>
+
+      {/* Staggered Gravity Drop Animation Container */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        className="flex flex-wrap justify-center items-center gap-3.5 max-w-5xl mx-auto px-6 relative z-10"
+      >
+        {techItems.map((item) => (
+          <motion.div
+            key={item.name}
+            variants={itemVariants}
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.05, y: -2 }}
+            whileTap={shouldReduceMotion ? undefined : { scale: 0.96 }}
+            className="group bg-[#130f26]/80 backdrop-blur-md border border-purple-900/40 hover:border-pink-500/60 hover:shadow-lg hover:shadow-purple-500/20 px-5 py-2.5 rounded-xl text-purple-200 text-sm font-medium flex items-center gap-2.5 transition-all select-none cursor-pointer"
+          >
+            {/* Official Tech Icon */}
+            <span
+              className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
+              style={{ color: item.color }}
+              aria-hidden="true"
+            >
+              {item.svgIcon}
+            </span>
+
+            {/* Tech Label */}
+            <span className="font-space text-sm font-semibold tracking-wide text-purple-100 group-hover:text-white transition-colors">
+              {item.name}
+            </span>
+
+            {/* Outward Diagonal Arrow */}
+            <ArrowUpRight className="w-3.5 h-3.5 text-purple-400/60 group-hover:text-pink-300 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" />
+          </motion.div>
+        ))}
+      </motion.div>
+    </section>
   );
 };
