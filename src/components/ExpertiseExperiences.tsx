@@ -26,6 +26,7 @@ export const ExpertiseExperiences: React.FC<ExpertiseExperiencesProps> = ({
   // ---- 1. DATA SCIENCE: Real Regression Model State ----
   const [points, setPoints] = useState<RegressionPoint[]>(initialRegressionPoints);
   const [draggedPointId, setDraggedPointId] = useState<number | null>(null);
+  const wasDraggingRef = useRef(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const metrics = calculateLinearRegression(points);
 
@@ -43,12 +44,15 @@ export const ExpertiseExperiences: React.FC<ExpertiseExperiencesProps> = ({
 
   const handlePointerDown = (id: number) => (e: React.PointerEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     setDraggedPointId(id);
+    wasDraggingRef.current = false;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (draggedPointId === null || !svgRef.current) return;
+    wasDraggingRef.current = true;
     const rect = svgRef.current.getBoundingClientRect();
     const mouseSvgX = ((e.clientX - rect.left) / rect.width) * svgWidth;
     const mouseSvgY = ((e.clientY - rect.top) / rect.height) * svgHeight;
@@ -63,6 +67,26 @@ export const ExpertiseExperiences: React.FC<ExpertiseExperiencesProps> = ({
 
   const handlePointerUp = () => {
     setDraggedPointId(null);
+    setTimeout(() => {
+      wasDraggingRef.current = false;
+    }, 50);
+  };
+
+  const handleSvgClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (wasDraggingRef.current || draggedPointId !== null || !svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+    const mouseSvgX = ((e.clientX - rect.left) / rect.width) * svgWidth;
+    const mouseSvgY = ((e.clientY - rect.top) / rect.height) * svgHeight;
+
+    const clickX = Math.round(fromSvgX(mouseSvgX));
+    const clickY = Math.round(fromSvgY(mouseSvgY));
+
+    if (clickX >= 5 && clickX <= 95 && clickY >= 5 && clickY <= 95) {
+      setPoints((prev) => [
+        ...prev,
+        { id: Date.now(), x: clickX, y: clickY, label: `Sensor ${prev.length + 1}` }
+      ]);
+    }
   };
 
   const resetPoints = () => {
@@ -254,6 +278,7 @@ export const useOrderSubscription = (tableId: string) => {
                 ref={svgRef}
                 viewBox={`0 0 ${svgWidth} ${svgHeight}`}
                 className="w-full h-auto select-none touch-none cursor-crosshair"
+                onClick={handleSvgClick}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerLeave={handlePointerUp}
