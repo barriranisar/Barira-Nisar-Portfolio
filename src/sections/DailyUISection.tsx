@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout, Layers, CheckCircle2, ArrowUpRight, X, Sparkles } from 'lucide-react';
+import { KineticTitle } from '../components/KineticTitle';
 import { dailyUIChallenges } from '../data/uiChallenges';
 import type { UIChallenge } from '../types';
 
@@ -206,15 +207,11 @@ export const DailyUISection: React.FC = () => {
             <Layout className="w-3.5 h-3.5" />
             <span>DESIGN SPRINT SHOWCASE</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Daily UI Showcase"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Daily UI Showcase
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -259,7 +256,12 @@ export const DailyUISection: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35, delay: (idx % 12) * 0.03 }}
+                  whileHover={{ y: -6 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: (idx % 12) * 0.12,
+                    y: { type: 'spring', stiffness: 350, damping: 24 }
+                  }}
                   onClick={() => setActiveModalChallenge(item)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -320,9 +322,9 @@ export const DailyUISection: React.FC = () => {
                         <Layers className="w-3.5 h-3.5 text-pink-400" />
                         <span>Figma Spec</span>
                       </span>
-                      <span className="text-pink-400 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 font-semibold text-[11px]">
+                      <span className="text-pink-400 group-hover:text-white transition-colors flex items-center gap-1 font-semibold text-[11px]">
                         <span>Inspect</span>
-                        <ArrowUpRight className="w-3 h-3" />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-pink-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                       </span>
                     </div>
                   </div>

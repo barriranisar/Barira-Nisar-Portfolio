@@ -4,6 +4,7 @@ import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { HoloAvatarCard } from '../components/HoloAvatarCard';
 import { ExpertiseExperiences } from '../components/ExpertiseExperiences';
+import { KineticTitle } from '../components/KineticTitle';
 
 export const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -26,15 +27,11 @@ export const About: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5" />
             <span>WHO I AM</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="A Little About Me"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            A Little About Me
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

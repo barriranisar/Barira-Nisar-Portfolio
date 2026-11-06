@@ -4,6 +4,7 @@ import { CustomCursor } from './components/CustomCursor';
 import { CanvasBackground } from './components/CanvasBackground';
 import { Navbar } from './components/Navbar';
 import { Hero } from './sections/Hero';
+import { TechMarquee } from './components/TechMarquee';
 import { About } from './sections/About';
 import { Projects } from './sections/Projects';
 import { Experience } from './sections/Experience';
@@ -135,6 +136,7 @@ export const App: React.FC = () => {
         {/* Sections */}
         <main>
           <Hero accentColor={activeColor} scrollProgress={scrollProgress} />
+          <TechMarquee />
           <About />
           <Projects />
           <Suspense fallback={<div className="min-h-[400px]" />}>

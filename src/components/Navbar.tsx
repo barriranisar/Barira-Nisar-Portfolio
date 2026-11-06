@@ -41,7 +41,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionSelect }
     onSectionSelect?.(id);
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      if (window.__lenis) {
+        window.__lenis.scrollTo(element, { offset: -60, duration: 1.4 });
+      } else {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setMobileMenuOpen(false);
   };

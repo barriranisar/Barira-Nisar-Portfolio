@@ -34,7 +34,13 @@ export const Hero: React.FC<HeroProps> = ({
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      if (window.__lenis) {
+        window.__lenis.scrollTo(el, { offset: -60, duration: 1.4 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
@@ -104,29 +110,39 @@ export const Hero: React.FC<HeroProps> = ({
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
         </motion.div>
 
-        {/* Main Heading */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="space-y-2 mb-4"
-        >
-          <p className="text-sm sm:text-base font-mono-code uppercase tracking-widest text-zinc-400">
-            Welcome To My Universe
-          </p>
-          <h1 className="font-space text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white leading-none">
-            Hi, I'm{' '}
-            <span className="text-gradient-purple-pink inline-block relative">
-              {profileData.name}
-              <motion.span
-                animate={{ width: ['0%', '100%'] }}
-                transition={{ duration: 1.2, delay: 0.5, ease: 'easeInOut' }}
-                className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 rounded-full"
-              />
-            </span>
-            .
-          </h1>
-        </motion.div>
+        {/* Main Heading with Kinetic Reveal */}
+        <div className="space-y-2 mb-4">
+          <div className="overflow-hidden inline-block">
+            <motion.p
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: '0%', opacity: 1 }}
+              transition={{ duration: 0.7, ease: [0.33, 1, 0.68, 1], delay: 0.05 }}
+              className="text-sm sm:text-base font-mono-code uppercase tracking-widest text-zinc-400"
+            >
+              Welcome To My Universe
+            </motion.p>
+          </div>
+
+          <div className="overflow-hidden pb-2 -mb-2">
+            <motion.h1
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: '0%', opacity: 1 }}
+              transition={{ duration: 0.85, ease: [0.33, 1, 0.68, 1], delay: 0.15 }}
+              className="font-space text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white leading-none"
+            >
+              Hi, I'm{' '}
+              <span className="text-gradient-purple-pink inline-block relative">
+                {profileData.name}
+                <motion.span
+                  animate={{ width: ['0%', '100%'] }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: 'easeInOut' }}
+                  className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 rounded-full"
+                />
+              </span>
+              .
+            </motion.h1>
+          </div>
+        </div>
 
         {/* Animated Dynamic Role Badge Switcher */}
         <motion.div

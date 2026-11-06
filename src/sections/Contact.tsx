@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Send, MapPin, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { KineticTitle } from '../components/KineticTitle';
 import { profileData } from '../data/profile';
 
 // Clean SVG brand icons
@@ -178,15 +179,11 @@ export const Contact: React.FC = () => {
             <Mail className="w-3.5 h-3.5" />
             <span>LET'S CONNECT</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Have Something Interesting in Mind?"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Have Something Interesting in Mind?
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Calendar, Building2, Users, Sparkles, Globe } from 'lucide-react';
+import { Briefcase, Calendar, Building2, Users, Sparkles, Globe, ArrowUpRight } from 'lucide-react';
+import { KineticTitle } from '../components/KineticTitle';
 import { experiencesData, extracurricularData } from '../data/experiences';
 
 export const Experience: React.FC = () => {
@@ -22,15 +23,11 @@ export const Experience: React.FC = () => {
             <Briefcase className="w-3.5 h-3.5" />
             <span>WORK EXPERIENCE &amp; INTERNSHIPS</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Where I've Contributed"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Where I've Contributed
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -69,9 +66,13 @@ export const Experience: React.FC = () => {
                     <span className="absolute w-2 h-2 rounded-full bg-white" />
                   </div>
 
-                  {/* Experience Card */}
+                  {/* Experience Card with Magnetic Lift */}
                   <div className="w-full md:w-[calc(50%-40px)]">
-                    <div className="bg-[#0f0c1b]/80 border border-purple-900/30 rounded-2xl p-6 sm:p-7 backdrop-blur-xl hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300">
+                    <motion.div
+                      whileHover={{ y: -6 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 24 }}
+                      className="group bg-[#0f0c1b]/80 border border-purple-900/30 rounded-2xl p-6 sm:p-7 backdrop-blur-xl hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300"
+                    >
                       {/* Top Header */}
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <span
@@ -82,9 +83,12 @@ export const Experience: React.FC = () => {
                           {item.type}
                         </span>
 
-                        <div className="flex items-center gap-1.5 text-xs font-mono-code text-zinc-400">
-                          <Calendar className="w-3.5 h-3.5 text-pink-400" />
-                          <span>{item.period || item.date}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 text-xs font-mono-code text-zinc-400">
+                            <Calendar className="w-3.5 h-3.5 text-pink-400" />
+                            <span>{item.period || item.date}</span>
+                          </div>
+                          <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-purple-300 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                         </div>
                       </div>
 
@@ -130,7 +134,7 @@ export const Experience: React.FC = () => {
                           ))}
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               );
@@ -150,15 +154,11 @@ export const Experience: React.FC = () => {
               <Users className="w-3.5 h-3.5" />
               <span>COMMUNITY &amp; LEADERSHIP</span>
             </motion.div>
-            <motion.h3
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+            <KineticTitle
+              text="Leadership & Extracurricular Activities"
               className="font-space text-2xl sm:text-4xl font-extrabold text-white tracking-tight"
-            >
-              Leadership &amp; Extracurricular Activities
-            </motion.h3>
+              delay={0.1}
+            />
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -178,8 +178,13 @@ export const Experience: React.FC = () => {
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className="bg-[#120e22]/60 border border-purple-900/30 rounded-xl p-5 backdrop-blur-md hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/40 transition-all duration-300 flex flex-col justify-between"
+                whileHover={{ y: -6 }}
+                transition={{
+                  duration: 0.5,
+                  delay: idx * 0.12,
+                  y: { type: 'spring', stiffness: 350, damping: 24 }
+                }}
+                className="group bg-[#120e22]/60 border border-purple-900/30 rounded-xl p-5 backdrop-blur-md hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/40 transition-all duration-300 flex flex-col justify-between cursor-pointer"
               >
                 <div>
                   {/* Top Badge & Period */}
@@ -191,9 +196,12 @@ export const Experience: React.FC = () => {
                     >
                       {item.category || item.badge}
                     </span>
-                    <span className="text-[11px] font-mono-code text-zinc-400">
-                      {item.year || item.period}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-mono-code text-zinc-400">
+                        {item.year || item.period}
+                      </span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-pink-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </div>
                   </div>
 
                   {/* Role Title */}

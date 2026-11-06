@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
+import { KineticTitle } from '../components/KineticTitle';
 import { photographyData } from '../data/photography';
 import type { PhotographyItem } from '../types';
 
@@ -43,15 +44,11 @@ export const Photography: React.FC = () => {
             <Camera className="w-3.5 h-3.5" />
             <span>THROUGH MY LENS</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Visual Chronicles"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Visual Chronicles
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -71,7 +68,12 @@ export const Photography: React.FC = () => {
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5, delay: (index % 6) * 0.07 }}
+              whileHover={{ y: -6 }}
+              transition={{
+                duration: 0.5,
+                delay: (index % 6) * 0.1,
+                y: { type: 'spring', stiffness: 350, damping: 24 }
+              }}
               onClick={() => setSelectedPhoto(photo)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

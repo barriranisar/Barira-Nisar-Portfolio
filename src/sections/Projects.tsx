@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FolderGit2, ArrowUpRight, Sparkles, Eye, Code, Database, Gamepad2 } from 'lucide-react';
+import { KineticTitle } from '../components/KineticTitle';
 import { projectsData } from '../data/projects';
 import type { ProjectItem } from '../types';
 
@@ -64,15 +65,11 @@ export const Projects: React.FC = () => {
             <FolderGit2 className="w-3.5 h-3.5" />
             <span>PORTFOLIO SHOWCASE</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Selected Works"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Selected Works
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -125,8 +122,13 @@ export const Projects: React.FC = () => {
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="group rounded-3xl glass-panel border border-white/10 overflow-hidden flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300 h-full focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none"
+                whileHover={{ y: -6 }}
+                transition={{
+                  duration: 0.45,
+                  delay: idx * 0.12,
+                  y: { type: 'spring', stiffness: 350, damping: 24 }
+                }}
+                className="group rounded-3xl glass-panel border border-white/10 overflow-hidden flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300 h-full focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none cursor-pointer"
               >
                 {/* Project Image & Overlay - Fixed Aspect Ratio */}
                 <div
@@ -200,9 +202,15 @@ export const Projects: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-end">
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                       <span className="text-[10px] font-mono-code text-zinc-400 uppercase tracking-wider">
                         {project.category.split('/')[0]}
+                      </span>
+
+                      {/* Animated diagonal arrow indicator */}
+                      <span className="inline-flex items-center gap-1.5 text-xs font-mono-code font-semibold text-purple-300 group-hover:text-white transition-colors">
+                        <span>View Details</span>
+                        <ArrowUpRight className="w-4 h-4 text-purple-400 group-hover:text-pink-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                       </span>
                     </div>
                   </div>

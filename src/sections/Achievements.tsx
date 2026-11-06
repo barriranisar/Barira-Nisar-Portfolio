@@ -9,6 +9,7 @@ import {
   Download,
   ShieldCheck
 } from 'lucide-react';
+import { KineticTitle } from '../components/KineticTitle';
 import { achievementsData } from '../data/achievements';
 import type { AchievementItem } from '../types';
 
@@ -50,15 +51,11 @@ export const Achievements: React.FC = () => {
             <Award className="w-3.5 h-3.5" />
             <span>HONORS &amp; RECOGNITION</span>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          <KineticTitle
+            text="Milestones & Recognition"
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-          >
-            Milestones &amp; Recognition
-          </motion.h2>
+            delay={0.1}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +75,12 @@ export const Achievements: React.FC = () => {
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: idx * 0.05 }}
+              whileHover={{ y: -6 }}
+              transition={{
+                duration: 0.45,
+                delay: idx * 0.1,
+                y: { type: 'spring', stiffness: 350, damping: 24 }
+              }}
               className="bg-[#130f24]/70 backdrop-blur-md border border-purple-800/30 hover:border-purple-500/60 transition-all duration-300 rounded-2xl p-6 relative group overflow-hidden flex flex-col justify-between select-none shadow-xl hover:shadow-2xl hover:shadow-purple-950/40"
             >
               {/* Subtle animated gradient glow in the corner on hover */}
