@@ -111,11 +111,22 @@ export const Projects: React.FC = () => {
               <motion.div
                 key={project.id}
                 layout
+                layoutId={`project-card-${project.id}`}
+                tabIndex={0}
+                role="button"
+                aria-haspopup="dialog"
+                aria-label={`View details for ${project.title}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveModalProject(project);
+                  }
+                }}
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="group rounded-3xl glass-panel border border-white/10 overflow-hidden flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300 h-full"
+                className="group rounded-3xl glass-panel border border-white/10 overflow-hidden flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/50 transition-all duration-300 h-full focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none"
               >
                 {/* Project Image & Overlay - Fixed Aspect Ratio */}
                 <div
@@ -217,14 +228,12 @@ export const Projects: React.FC = () => {
       </div>
 
       {/* Interactive Project Details Modal */}
-      {activeModalProject && (
-        <Suspense fallback={null}>
-          <ProjectModal
-            project={activeModalProject}
-            onClose={() => setActiveModalProject(null)}
-          />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <ProjectModal
+          project={activeModalProject}
+          onClose={() => setActiveModalProject(null)}
+        />
+      </Suspense>
     </section>
   );
 };
