@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Layout, Layers, CheckCircle2, ArrowUpRight, X, Sparkles } from 'lucide-react';
 import { dailyUIChallenges } from '../data/uiChallenges';
 import type { UIChallenge } from '../types';
@@ -116,6 +116,7 @@ const getChallengeRationale = (challenge: UIChallenge): string => {
 
 export const DailyUISection: React.FC = () => {
   const [activeModalChallenge, setActiveModalChallenge] = useState<UIChallenge | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   // Filter ONLY Days 07, 08, 09, 22, 25, and 30
   const filteredChallenges = dailyUIChallenges.filter((item) => {
@@ -226,7 +227,20 @@ export const DailyUISection: React.FC = () => {
           </motion.p>
 
           {/* Sprint Highlights Pill */}
-    
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.25 }}
+            className="inline-flex items-center gap-3 mt-6 px-4 py-2 rounded-2xl glass-panel border border-pink-500/30 text-xs font-mono-code text-zinc-300"
+          >
+            <div className="flex items-center gap-1.5 text-pink-400 font-bold">
+              <Sparkles className="w-4 h-4 text-pink-400" />
+              <span>Curated UI Sprint Highlights</span>
+            </div>
+            <span className="text-zinc-600">|</span>
+            <span className="text-purple-300">Days 07, 08, 09, 22, 25, 30</span>
+          </motion.div>
         </div>
 
         {/* Challenge Cards Grid */}
@@ -238,24 +252,93 @@ export const DailyUISection: React.FC = () => {
               return (
                 <motion.div
                   key={item.day}
-                  layout
-                  tabIndex={0}
-                  role="button"
-                  aria-haspopup="dialog"
-                  aria-label={`View Daily UI challenge: ${item.title}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35, delay: (idx % 12) * 0.03 }}
-                  onClick={() => setActiveModalChallenge(item)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setActiveModalChallenge(item);
-                    }
-                  }}
-                  className="group relative rounded-3xl glass-panel border border-white/10 p-6 flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/40 transition-all duration-300 cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none"
+                  initial={
+                    shouldReduceMotion
+                      ? { opacity: 0 }
+                      : {
+                          opacity: 0,
+                          scale: 0.3,
+                          y: -400,
+                          x: idx % 2 === 0 ? -250 : 250,
+                          rotate: idx % 2 === 0 ? -45 : 45,
+                        }
+                  }
+                  whileInView={
+                    shouldReduceMotion
+                      ? { opacity: 1 }
+                      : {
+                          opacity: 1,
+                          scale: 1,
+                          y: 0,
+                          x: 0,
+                          rotate: 0,
+                        }
+                  }
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0.3 }
+                      : {
+                          type: 'spring',
+                          stiffness: 90,
+                          damping: 14,
+                          mass: 1.2,
+                          delay: idx * 0.18,
+                        }
+                  }
+                  className="h-full flex"
                 >
+                  <motion.div
+                    tabIndex={0}
+                    role="button"
+                    aria-haspopup="dialog"
+                    aria-label={`View Daily UI challenge: ${item.title}`}
+                    animate={
+                      shouldReduceMotion
+                        ? undefined
+                        : {
+                            y: [0, -8, 0, 8, 0],
+                            rotate: [0, 1.2, 0, -1.2, 0],
+                          }
+                    }
+                    transition={
+                      shouldReduceMotion
+                        ? undefined
+                        : {
+                            y: {
+                              repeat: Infinity,
+                              duration: 4 + idx * 0.5,
+                              ease: 'easeInOut',
+                              delay: idx * 0.18 + 0.9,
+                            },
+                            rotate: {
+                              repeat: Infinity,
+                              duration: 5 + idx * 0.4,
+                              ease: 'easeInOut',
+                              delay: idx * 0.18 + 0.9,
+                            },
+                          }
+                    }
+                    whileHover={
+                      shouldReduceMotion
+                        ? undefined
+                        : {
+                            scale: 1.05,
+                            y: -10,
+                            rotate: 0,
+                            transition: { duration: 0.2 },
+                          }
+                    }
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+                    onClick={() => setActiveModalChallenge(item)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setActiveModalChallenge(item);
+                      }
+                    }}
+                    className="group relative rounded-3xl glass-panel border border-white/10 p-6 flex flex-col justify-between hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-950/40 transition-all duration-300 cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none w-full"
+                  >
                   {/* Subtle Top Gradient Bar */}
                   <div
                     className="absolute top-0 inset-x-0 h-1 opacity-40 group-hover:opacity-100 transition-opacity"
@@ -314,8 +397,9 @@ export const DailyUISection: React.FC = () => {
                     </div>
                   </div>
                 </motion.div>
-              );
-            })}
+              </motion.div>
+            );
+          })}
           </AnimatePresence>
         </div>
 
