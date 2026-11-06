@@ -122,7 +122,7 @@ export const Canvas3DHero: React.FC<Canvas3DHeroProps> = ({
     const wireMesh = new THREE.Mesh(wireGeo, wireMat);
     masterGroup.add(wireMesh);
 
-    // 2. Gyroscope Rings (Data Science cyan, Web dev magenta/purple, Photography amber/coral)
+    // 2. Gyroscope Rings (Data Science cyan, Web dev purple, Creative highlight pink)
     const ring1Geo = new THREE.TorusGeometry(2.4, 0.025, 16, isLowEnd ? 50 : 100);
     const ring1Mat = new THREE.MeshStandardMaterial({
       color: 0x06b6d4,
@@ -149,8 +149,8 @@ export const Canvas3DHero: React.FC<Canvas3DHeroProps> = ({
 
     const ring3Geo = new THREE.TorusGeometry(3.0, 0.03, 16, isLowEnd ? 50 : 100);
     const ring3Mat = new THREE.MeshStandardMaterial({
-      color: 0xf97316,
-      emissive: 0xc2410c,
+      color: 0xec4899,
+      emissive: 0xbe185d,
       emissiveIntensity: 0.7,
       roughness: 0.4,
       metalness: 0.8
@@ -195,7 +195,7 @@ export const Canvas3DHero: React.FC<Canvas3DHeroProps> = ({
 
     const c1 = new THREE.Color('#06b6d4'); // Data Science
     const c2 = new THREE.Color('#8b5cf6'); // Web Engineering
-    const c3 = new THREE.Color('#f97316'); // Photography
+    const c3 = new THREE.Color('#3b82f6'); // Azure Blue
     const c4 = new THREE.Color('#ec4899'); // Rare highlight
 
     for (let i = 0; i < particleCount; i++) {

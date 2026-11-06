@@ -6,11 +6,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
-    if (window.__lenis) {
-      window.__lenis.scrollTo(0, { duration: 1.4 });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -42,7 +38,6 @@ export const Footer: React.FC = () => {
             <a href="#about" className="hover:text-purple-300 transition-colors">About</a>
             <a href="#projects" className="hover:text-pink-300 transition-colors">Projects</a>
             <a href="#daily-ui" className="hover:text-cyan-300 transition-colors">Daily UI</a>
-            <a href="#photography" className="hover:text-orange-300 transition-colors">Photography</a>
             <a href="#experience" className="hover:text-purple-300 transition-colors">Experience</a>
             <a href="#achievements" className="hover:text-emerald-300 transition-colors">Achievements</a>
             <a href="#contact" className="hover:text-pink-300 transition-colors">Contact</a>

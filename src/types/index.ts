@@ -1,4 +1,4 @@
-export type IdentityRole = 'Data Scientist' | 'Web Developer' | 'Photographer';
+export type IdentityRole = 'Data Scientist' | 'Web Developer';
 
 export interface SocialLink {
   platform: string;
@@ -86,33 +86,6 @@ export interface ProjectItem {
   liveUrl?: string;
   githubUrl?: string;
   featured?: boolean;
-}
-
-export type PhotoCategory = 
-  | 'All' 
-  | 'Event Photography' 
-  | 'University Events' 
-  | 'Portraits' 
-  | 'Creative Photography' 
-  | 'Behind the Scenes';
-
-export interface PhotographyItem {
-  id: string;
-  title: string;
-  image: string;
-  category?: string;
-  caption?: string;
-  location?: string;
-  date?: string;
-  aspectRatio?: 'square' | 'portrait' | 'landscape' | 'wide';
-  exif?: {
-    camera?: string;
-    lens?: string;
-    focalLength?: string;
-    aperture?: string;
-    iso?: string;
-    shutter?: string;
-  };
 }
 
 export interface ExperienceItem {

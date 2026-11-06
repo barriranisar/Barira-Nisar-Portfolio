@@ -15,9 +15,6 @@ import { useSmoothScroll } from './hooks/useSmoothScroll';
 const DailyUISection = React.lazy(() =>
   import('./sections/DailyUISection').then((m) => ({ default: m.DailyUISection }))
 );
-const Photography = React.lazy(() =>
-  import('./sections/Photography').then((m) => ({ default: m.Photography }))
-);
 const Achievements = React.lazy(() =>
   import('./sections/Achievements').then((m) => ({ default: m.Achievements }))
 );
@@ -40,7 +37,6 @@ export const App: React.FC = () => {
       'about',
       'projects',
       'daily-ui',
-      'photography',
       'experience',
       'achievements',
       'contact'
@@ -98,12 +94,10 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loading]);
 
-  // Three discipline colors:
-  // Data Science = #06b6d4, Web Engineering = #8b5cf6, Photography = #f97316
+  // Two core discipline colors:
+  // Data Science = #06b6d4, Web Engineering = #8b5cf6
   const getDisciplineColor = (section: string): string => {
     switch (section) {
-      case 'photography':
-        return '#f97316';
       case 'experience':
       case 'achievements':
         return '#06b6d4';
@@ -141,9 +135,6 @@ export const App: React.FC = () => {
           <Projects />
           <Suspense fallback={<div className="min-h-[400px]" />}>
             <DailyUISection />
-          </Suspense>
-          <Suspense fallback={<div className="min-h-[400px]" />}>
-            <Photography />
           </Suspense>
           <Experience />
           <Suspense fallback={<div className="min-h-[400px]" />}>

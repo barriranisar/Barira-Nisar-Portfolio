@@ -3,7 +3,6 @@
 @theme {
   --color-data-science: #06b6d4;
   --color-web-engineering: #8b5cf6;
-  --color-photography: #f97316;
   --color-coral: #f97316;
   --color-rare-pink: #ec4899;
   --color-rare-blue: #3b82f6;
@@ -13,7 +12,6 @@
   :root {
     --discipline-data-science: #06b6d4;
     --discipline-web-engineering: #8b5cf6;
-    --discipline-photography: #f97316;
     --rare-pink: #ec4899;
     --rare-blue: #3b82f6;
     --theme-bg: #07040e;
@@ -204,47 +202,4 @@
 ::selection {
   background: #ec4899;
   color: #ffffff;
-}
-
-/* Lenis smooth scrolling rules */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-/* Infinite Marquee Animation */
-@keyframes marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee-scroll 35s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* Gradient edge mask for marquee tracks */
-.mask-marquee {
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
 }

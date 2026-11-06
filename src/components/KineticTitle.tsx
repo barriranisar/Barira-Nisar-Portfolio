@@ -84,3 +84,4 @@ export const KineticLines: React.FC<KineticLinesProps> = ({
     </Tag>
   );
 };
+

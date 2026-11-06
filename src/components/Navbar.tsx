@@ -13,7 +13,6 @@ const navLinks = [
   { name: 'About', href: '#about' },
   { name: 'Projects', href: '#projects' },
   { name: 'Daily UI', href: '#daily-ui' },
-  { name: 'Photography', href: '#photography' },
   { name: 'Experience', href: '#experience' },
   { name: 'Achievements', href: '#achievements' },
   { name: 'Contact', href: '#contact' },
@@ -41,11 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionSelect }
     onSectionSelect?.(id);
     const element = document.getElementById(id);
     if (element) {
-      if (window.__lenis) {
-        window.__lenis.scrollTo(element, { offset: -60, duration: 1.4 });
-      } else {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      element.scrollIntoView({ behavior: 'smooth' });
     }
     setMobileMenuOpen(false);
   };

@@ -4,7 +4,6 @@ import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { HoloAvatarCard } from '../components/HoloAvatarCard';
 import { ExpertiseExperiences } from '../components/ExpertiseExperiences';
-import { KineticTitle } from '../components/KineticTitle';
 
 export const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -27,11 +26,15 @@ export const About: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5" />
             <span>WHO I AM</span>
           </motion.div>
-          <KineticTitle
-            text="A Little About Me"
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
             className="font-space text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
-            delay={0.1}
-          />
+          >
+            A Little About Me
+          </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -62,9 +65,9 @@ export const About: React.FC = () => {
             <div className="mt-6 p-4 rounded-2xl glass-panel border border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-300">
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                <span>3 Disciplines, 1 Vision</span>
+                <span>2 Core Disciplines</span>
               </span>
-              <span className="text-zinc-500">Logic • Code • Optics</span>
+              <span className="text-zinc-500">Logic • Code</span>
             </div>
           </motion.div>
 
@@ -104,7 +107,7 @@ export const About: React.FC = () => {
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-zinc-400">
                 <span className="flex items-center gap-1.5 text-zinc-300">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  Analytical, Technical &amp; Visual Synergy
+                  Analytical &amp; Technical Synergy
                 </span>
                 <a
                   href="#projects"

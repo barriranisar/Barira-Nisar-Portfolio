@@ -171,3 +171,4 @@ export const TechMarquee: React.FC = () => {
     </div>
   );
 };
+

@@ -14,23 +14,25 @@ export const CustomCursor: React.FC = () => {
     );
   });
 
-  // Direct mouse coordinates for immediate tracking (zero lag)
-  const rawMouseX = useMotionValue(-100);
-  const rawMouseY = useMotionValue(-100);
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
 
-  // Smooth springs for the outer lagging cosmic ring
-  const trailingX = useSpring(rawMouseX, { damping: 22, stiffness: 190 });
-  const trailingY = useSpring(rawMouseY, { damping: 22, stiffness: 190 });
+  // Smooth springs for cursor dot and outer glow ring
+  const springX = useSpring(mouseX, { damping: 28, stiffness: 350 });
+  const springY = useSpring(mouseY, { damping: 28, stiffness: 350 });
+
+  const trailingX = useSpring(mouseX, { damping: 18, stiffness: 140 });
+  const trailingY = useSpring(mouseY, { damping: 18, stiffness: 140 });
 
   useEffect(() => {
     if (isTouch) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      rawMouseX.set(e.clientX);
-      rawMouseY.set(e.clientY);
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
       if (!isVisible) setIsVisible(true);
 
-      // Check if target is an interactive or clickable element
+      // Check if target is interactive
       const target = e.target as HTMLElement | null;
       if (target) {
         const isInteractive = Boolean(
@@ -40,7 +42,6 @@ export const CustomCursor: React.FC = () => {
           target.closest('textarea') ||
           target.closest('select') ||
           target.closest('[role="button"]') ||
-          target.closest('.cursor-pointer') ||
           target.closest('[data-cursor="pointer"]')
         );
         setIsPointer(isInteractive);
@@ -52,7 +53,7 @@ export const CustomCursor: React.FC = () => {
     const handleMouseLeave = () => setIsVisible(false);
     const handleMouseEnter = () => setIsVisible(true);
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
@@ -65,67 +66,53 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [rawMouseX, rawMouseY, isVisible, isTouch]);
+  }, [mouseX, mouseY, isVisible, isTouch]);
 
   if (isTouch || !isVisible) return null;
 
   return (
     <>
-      {/* Lagging cosmic frosted ring */}
+      {/* Outer fluid trailing aura */}
       <motion.div
-        aria-hidden="true"
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full border border-purple-400/50 backdrop-blur-[1px]"
+        className="fixed top-0 left-0 pointer-events-none z-50 rounded-full border border-purple-400/50 mix-blend-screen"
         style={{
           x: trailingX,
           y: trailingY,
           translateX: '-50%',
           translateY: '-50%',
-          mixBlendMode: isPointer ? 'difference' : 'normal'
         }}
         animate={{
-          width: 38,
-          height: 38,
-          scale: isPointer ? 2.2 : isClicking ? 0.85 : 1,
-          opacity: isPointer ? 0.35 : 0.8,
+          width: isPointer ? 56 : 36,
+          height: isPointer ? 56 : 36,
           backgroundColor: isPointer
-            ? 'rgba(236, 72, 153, 0.4)'
-            : 'rgba(139, 92, 246, 0.1)',
+            ? 'rgba(236, 72, 153, 0.15)'
+            : 'rgba(139, 92, 246, 0.08)',
           borderColor: isPointer
-            ? 'rgba(255, 255, 255, 0.9)'
-            : 'rgba(168, 85, 247, 0.6)',
-          boxShadow: isPointer
-            ? '0 0 25px rgba(236, 72, 153, 0.5)'
-            : '0 0 15px rgba(139, 92, 246, 0.25)'
+            ? 'rgba(236, 72, 153, 0.6)'
+            : 'rgba(139, 92, 246, 0.4)',
+          scale: isClicking ? 0.8 : 1,
         }}
-        transition={{
-          scale: { type: 'spring', damping: 20, stiffness: 300 },
-          opacity: { duration: 0.18 },
-          backgroundColor: { duration: 0.2 },
-          borderColor: { duration: 0.2 }
-        }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
       />
 
-      {/* Small glowing core dot (tracks mouse coordinates with precision) */}
+      {/* Inner precise dot */}
       <motion.div
-        aria-hidden="true"
-        className="fixed top-0 left-0 pointer-events-none z-[10000] rounded-full"
+        className="fixed top-0 left-0 pointer-events-none z-50 rounded-full shadow-lg"
         style={{
-          x: rawMouseX,
-          y: rawMouseY,
+          x: springX,
+          y: springY,
           translateX: '-50%',
-          translateY: '-50%'
+          translateY: '-50%',
         }}
         animate={{
-          width: isPointer ? 6 : 7,
-          height: isPointer ? 6 : 7,
-          scale: isClicking ? 1.5 : 1,
-          backgroundColor: isPointer ? '#ffffff' : '#06b6d4',
-          boxShadow: isPointer
-            ? '0 0 10px #ffffff, 0 0 20px #ec4899'
-            : '0 0 8px #06b6d4, 0 0 16px rgba(6, 182, 212, 0.6)'
+          width: isPointer ? 10 : 6,
+          height: isPointer ? 10 : 6,
+          backgroundColor: isPointer ? '#ec4899' : '#06b6d4',
+          scale: isClicking ? 1.4 : 1,
         }}
-        transition={{ duration: 0.12 }}
+        transition={{ duration: 0.15 }}
       />
     </>
   );
 };
+
